@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace ReachMeApp
-{
+{ 
     public class Startup
     {
         public Startup(IConfiguration configuration)
