@@ -63,9 +63,9 @@ namespace ServiceLayer.Service.Implementation
             if(user != null)
             {
                 var token = GenerateToken(user);
-                return "User successfully logged in";
+                return token;
             }
-            return "Invalid log in";
+            return null;
         }
 
         public string Register(RegisterDto newUser)

@@ -1,4 +1,5 @@
-﻿using DomainLayer.Model;
+﻿using DomainLayer.Dto;
+using DomainLayer.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace RepositoryLayer.Data

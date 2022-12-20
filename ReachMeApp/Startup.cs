@@ -41,6 +41,7 @@ namespace ReachMeApp
             services.AddControllersWithViews();
             services.AddMvc();
             services.AddControllers();
+            services.AddServerSideBlazor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,6 +67,7 @@ namespace ReachMeApp
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapBlazorHub();
                 endpoints.MapControllers();
                 endpoints.MapControllerRoute(
                     name: "default",

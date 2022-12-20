@@ -20,17 +20,20 @@ namespace LoginRegisterAPI.Controllers
             this.loginRegister = loginRegister;
         }
 
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public IActionResult Login(LoginDto loginUser)
         {
-            return Ok(this.loginRegister.Login(loginUser));
+            var user = loginRegister.Login(loginUser);
+
+            if (user != null)
+                return Ok(user);
+            return BadRequest("User not found");
         }
 
-        [HttpPost("register")]
+        [HttpPost("Register")]
         public IActionResult Register(RegisterDto newUser)
         {
-            var response = loginRegister.Register(newUser);
-            return Ok(response);
+            return Ok(loginRegister.Register(newUser));
         }
     }
 }
