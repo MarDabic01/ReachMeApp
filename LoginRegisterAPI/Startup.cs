@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using RepositoryLayer.Data;
+using ServiceLayer.Service.Contract;
+using ServiceLayer.Service.Implementation;
 
 namespace LoginRegisterAPI
 {
@@ -21,6 +23,7 @@ namespace LoginRegisterAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<ILoginRegister, LoginRegisterService>();
             services.AddDbContext<DataContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();
             services.AddSwaggerGen(c =>
