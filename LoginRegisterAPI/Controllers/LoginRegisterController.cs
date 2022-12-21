@@ -33,7 +33,21 @@ namespace LoginRegisterAPI.Controllers
         [HttpPost("Register")]
         public IActionResult Register(RegisterDto newUser)
         {
-            return Ok(loginRegister.Register(newUser));
+            if(!loginRegister.IsInfoUsed(newUser))
+            {
+                var id = loginRegister.Register(newUser);
+                loginRegister.SendVerificationEmail(newUser.Email, id);
+
+                return Ok(id);
+            }
+            return BadRequest("Email or username already exist");
+        }
+
+        [HttpPost("VerifyEmail")]
+        public IActionResult VerifyEmail(VerifyDto verify)
+        {
+            loginRegister.VerifyUser(verify.UserId);
+            return Ok();
         }
     }
 }

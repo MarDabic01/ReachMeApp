@@ -3,11 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ReachMeApp.Controllers
 {
@@ -28,24 +25,18 @@ namespace ReachMeApp.Controllers
             return View();
         }
 
-        //Showing Login view
         public IActionResult Login()
         {
             return View();
         }
-        //Handling Login post method
+
         [HttpPost("Login")]
         public IActionResult Login(LoginDto loginUser)
         {
-            //Serializing loginUser and consuming LoginRegister API
-            string data = JsonConvert.SerializeObject(loginUser);
-            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-
+            StringContent content = Serialize<LoginDto>(loginUser);
             HttpResponseMessage response = client.PostAsync(client.BaseAddress + "api/LoginRegister/Login", content).Result;
 
             string token = response.Content.ReadAsStringAsync().Result;
-
-            //Storing jwt token into cookie local storage
             CookieOptions cookieOptions = new CookieOptions();
             cookieOptions.Expires = DateTime.Now.AddMinutes(15);
             Response.Cookies.Append("Jwt", token, cookieOptions);
@@ -55,24 +46,46 @@ namespace ReachMeApp.Controllers
             return View();
         }
 
-        //Showing Register view
         public IActionResult Register()
         {
+            TempData.Remove("ErrorMessage");
             return View();
         }
-        //Handling Register post method
+
         [HttpPost("Register")]
         public IActionResult Register(RegisterDto newUser)
         {
-            //Serializing loginUser and consuming LoginRegister API
-            string data = JsonConvert.SerializeObject(newUser);
-            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-
+            StringContent content = Serialize<RegisterDto>(newUser);
             HttpResponseMessage response = client.PostAsync(client.BaseAddress + "api/LoginRegister/Register", content).Result;
 
             if (response.IsSuccessStatusCode)
                 return RedirectToAction("Index");
+            TempData["ErrorMessage"] = "Email or username already in use";
             return View();
+        }
+
+        [HttpGet]
+        [Route("Home/VerifyEmail/{id}")]
+        public IActionResult VerifyEmail(string id)
+        {
+            VerifyDto dto = new VerifyDto
+            {
+                UserId = id
+            };
+            StringContent content = Serialize<string>(id);
+            HttpResponseMessage response = client.PostAsync(client.BaseAddress + "api/LoginRegister/VerifyEmail", content).Result;
+
+            if(response.IsSuccessStatusCode)
+                return RedirectToAction("Index");
+            return BadRequest("Something went wrong, verification failed");
+        }
+
+        private StringContent Serialize<T>(T obj)
+        {
+            string data = JsonConvert.SerializeObject(obj);
+            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+
+            return content;
         }
     }
 }

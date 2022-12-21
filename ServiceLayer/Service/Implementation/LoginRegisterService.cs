@@ -1,16 +1,17 @@
 ﻿using DomainLayer.Dto;
 using DomainLayer.Model;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using RepositoryLayer.Data;
 using ServiceLayer.Service.Contract;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ServiceLayer.Service.Implementation
 {
@@ -61,10 +62,7 @@ namespace ServiceLayer.Service.Implementation
             var user = Authenticate(loginUser);
 
             if(user != null)
-            {
-                var token = GenerateToken(user);
-                return token;
-            }
+                return GenerateToken(user);
             return null;
         }
 
@@ -79,7 +77,41 @@ namespace ServiceLayer.Service.Implementation
             context.Users.Add(user);
             context.SaveChanges();
 
-            return "User successfully created";
+            return user.Id.ToString();
+        }
+
+        public void SendVerificationEmail(string email, string id)
+        {
+            MailAddress to = new MailAddress(email);
+            MailAddress from = new MailAddress("reachme915@gmail.com");
+            MailMessage message = new MailMessage(from, to);
+            message.Subject = "REACH ME - Verification message";
+            message.Body = "<html>" +
+                "<h1>Welcome to ReachMe</h1>" +
+                "<h3>Please verify your e-mail <a href='https://localhost:44355/Home/VerifyEmail/"+ id +"'>here</a></h3>" +
+                "</html>";
+            message.IsBodyHtml = true;
+            SmtpClient client = new SmtpClient("smtp.gmail.com", 587)
+            {
+                Credentials = new NetworkCredential("reachme915@gmail.com", "yeljtbfzakhgwaow"),
+                EnableSsl = true
+            };
+            client.Send(message);
+        }
+
+        public void VerifyUser(string id)
+        {
+            var user = context.Users.FirstOrDefault(u => u.Id.ToString() == id);
+
+            user.IsVerified = true;
+            context.SaveChanges();
+        }
+
+        public bool IsInfoUsed(RegisterDto user)
+        {
+            if(context.Users.FirstOrDefault(u => u.Username == user.Username) == null && context.Users.FirstOrDefault(u => u.Email == user.Email) == null)
+                return false;
+            return true;
         }
     }
 }
