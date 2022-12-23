@@ -20,9 +20,9 @@
 <div class="d-flex justify-content-center">
     <div class="col-md-4">
         <form asp-action="Register">
-            @if (TempData.ContainsKey("ErrorMessage") == true)
+            @if (TempData.ContainsKey("InvalidRegister") == true)
             {
-                <span class="text-danger">Email or Username already in use</span>
+                <span class="text-danger">@TempData["InvalidRegister"]</span>
             }
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">

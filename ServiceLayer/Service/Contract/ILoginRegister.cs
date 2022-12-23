@@ -17,5 +17,6 @@ namespace ServiceLayer.Service.Contract
         void SendVerificationEmail(string email, string token);
         void VerifyUser(string id);
         bool IsInfoUsed(RegisterDto user);
+        bool IsUserVerified(User user);
     }
 }

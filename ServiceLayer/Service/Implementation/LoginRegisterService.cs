@@ -61,7 +61,7 @@ namespace ServiceLayer.Service.Implementation
         {
             var user = Authenticate(loginUser);
 
-            if(user != null)
+            if(user != null && IsUserVerified(user))
                 return GenerateToken(user);
             return null;
         }
@@ -112,6 +112,11 @@ namespace ServiceLayer.Service.Implementation
             if(context.Users.FirstOrDefault(u => u.Username == user.Username) == null && context.Users.FirstOrDefault(u => u.Email == user.Email) == null)
                 return false;
             return true;
+        }
+
+        public bool IsUserVerified(User user)
+        {
+            return context.Users.FirstOrDefault(u => u.Id == user.Id).IsVerified == true ? true : false;
         }
     }
 }

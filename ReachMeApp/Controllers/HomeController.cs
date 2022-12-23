@@ -25,8 +25,10 @@ namespace ReachMeApp.Controllers
             return View();
         }
 
+        [HttpGet("Login")]
         public IActionResult Login()
         {
+            TempData.Remove("InvalidLogin");
             return View();
         }
 
@@ -43,12 +45,13 @@ namespace ReachMeApp.Controllers
 
             if (response.IsSuccessStatusCode)
                 return RedirectToAction("Index");
+            TempData["InvalidLogin"] = "User do not exist or is not verified";
             return View();
         }
 
         public IActionResult Register()
         {
-            TempData.Remove("ErrorMessage");
+            TempData.Remove("InvalidRegister");
             return View();
         }
 
@@ -60,7 +63,7 @@ namespace ReachMeApp.Controllers
 
             if (response.IsSuccessStatusCode)
                 return RedirectToAction("Index");
-            TempData["ErrorMessage"] = "Email or username already in use";
+            TempData["InvalidRegister"] = "Email or username already in use";
             return View();
         }
 

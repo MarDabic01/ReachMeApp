@@ -24,6 +24,7 @@ namespace LoginRegisterAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<ILoginRegister, LoginRegisterService>();
+            services.AddScoped<IForgotPassword, ForgotPasswordService>();
             services.AddDbContext<DataContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();
             services.AddSwaggerGen(c =>
