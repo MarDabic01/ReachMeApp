@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceLayer", "ServiceLaye
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoginRegisterAPI", "LoginRegisterAPI\LoginRegisterAPI.csproj", "{03DAAA32-4A4C-4026-A082-DEABE71B2F5C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserAPI", "UserAPI\UserAPI.csproj", "{1809B155-7D7A-4CC9-B331-65DAE1D38554}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{03DAAA32-4A4C-4026-A082-DEABE71B2F5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03DAAA32-4A4C-4026-A082-DEABE71B2F5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03DAAA32-4A4C-4026-A082-DEABE71B2F5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1809B155-7D7A-4CC9-B331-65DAE1D38554}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1809B155-7D7A-4CC9-B331-65DAE1D38554}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1809B155-7D7A-4CC9-B331-65DAE1D38554}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1809B155-7D7A-4CC9-B331-65DAE1D38554}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -25,8 +25,14 @@ namespace ReachMeApp.Controllers
             return View();
         }
 
-        [HttpGet("Login")]
         public IActionResult Login()
+        {
+            TempData.Remove("InvalidLogin");
+            return View();
+        }
+
+        [HttpGet("Login")]
+        public IActionResult Login(int x)
         {
             TempData.Remove("InvalidLogin");
             return View();
@@ -44,7 +50,7 @@ namespace ReachMeApp.Controllers
             Response.Cookies.Append("Jwt", token, cookieOptions);
 
             if (response.IsSuccessStatusCode)
-                return RedirectToAction("Index");
+                return RedirectToAction("Index","User");
             TempData["InvalidLogin"] = "User do not exist or is not verified";
             return View();
         }

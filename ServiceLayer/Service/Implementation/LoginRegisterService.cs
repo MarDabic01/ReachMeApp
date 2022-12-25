@@ -47,8 +47,8 @@ namespace ServiceLayer.Service.Implementation
             };
 
             var token = new JwtSecurityToken(
-                "https://localhost:44355/",
-                "https://localhost:44355/",
+                "https://localhost:44348/",
+                "https://localhost:44348/",
                 claims,
                 expires: DateTime.Now.AddMinutes(15),
                 signingCredentials: credentials
