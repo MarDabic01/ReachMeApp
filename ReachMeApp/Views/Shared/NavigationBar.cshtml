@@ -1,7 +1,9 @@
-﻿<header>
+﻿@model DomainLayer.Dto.NavigationDto
+
+<header>
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
         <div class="container">
-            <a class="navbar-brand home-bar-title" href="/Home/Index">Reach Me</a>
+            <a class="navbar-brand home-bar-title">Reach Me</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -21,16 +23,16 @@
                         <a class="nav-link text-dark" href="/User/Account">Account</a>
                     </li>
                 </ul>
-                <div class="input-group w-25 justify-content-end">
-                    <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
-                    <button type="button" class="btn btn-outline-primary">Search</button>
-                </div>
+                <form class="input-group w-25 justify-content-end" method="post" asp-controller="User" asp-action="Search">
+                    <input type="text" class="form-control rounded" asp-for="SearchString" placeholder="Search" aria-label="Search" aria-describedby="search-addon"/>
+                    <input type="submit" class="btn btn-outline-primary" value="Search">
+                </form>
                 <ul class="navbar-nav flex-grow-1 d-flex justify-content-end">
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="/Home/Register"><img class="postIcon" /></a>
+                        <a class="nav-link text-dark" asp-controller="User" asp-action="Post"><img class="postIcon" /></a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-outline-danger" asp-controller="Home" asp-action="Index">Logout</a>
+                        <a class="btn btn-outline-danger" asp-controller="Home" asp-action="Logout">Logout</a>
                     </li>
                 </ul>
             </div>

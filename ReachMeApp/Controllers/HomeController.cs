@@ -25,6 +25,13 @@ namespace ReachMeApp.Controllers
             return View();
         }
 
+        public IActionResult Logout()
+        {
+            if (HttpContext.Request.Cookies["Jwt"] != null)
+                Response.Cookies.Delete("Jwt");
+            return View("Index");
+        }
+
         public IActionResult Login()
         {
             TempData.Remove("InvalidLogin");

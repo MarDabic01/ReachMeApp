@@ -1,5 +1,4 @@
 ﻿using DomainLayer.Dto;
-using DomainLayer.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,35 +13,36 @@ namespace UserAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProfileController : ControllerBase
+    public class PostController : ControllerBase
     {
         private readonly IUser userService;
 
-        public ProfileController(IUser userService)
+        public PostController(IUser userService)
         {
             this.userService = userService;
         }
 
         [HttpGet]
         [Authorize]
-        public IActionResult ShowProfile()
+        public IActionResult PostPicture()
+        {
+            return Ok();
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult PostPicture(PostDbDto post)
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
 
-            if(identity != null)
+            if (identity != null)
             {
                 var userClaims = identity.Claims;
-                return Ok(userService.GetUser(userClaims.FirstOrDefault(u => u.Type == ClaimTypes.NameIdentifier).Value));
+                var currentUser = userService.GetUser(userClaims.FirstOrDefault(u => u.Type == ClaimTypes.NameIdentifier).Value);
+                post.UserId = currentUser.Id;
             }
-            return BadRequest();
-        }
-
-        [HttpGet]
-        [Route("/api/Profile/{username}")]
-        [Authorize]
-        public IActionResult ShowProfile(string username)
-        {
-            return Ok(userService.GetUserByUsername(username));
+            userService.PostPicture(post);
+            return Ok();
         }
     }
 }

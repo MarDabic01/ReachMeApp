@@ -1,27 +1,36 @@
 ﻿@model DomainLayer.Model.User
+@using ServiceLayer.Service.Implementation
+@using DomainLayer.Dto
+@inject UserService Service
 
 @{
     ViewData["Title"] = "Index";
 }
 
-@Html.Partial("NavigationBar")
+@Html.Partial("NavigationBar", new NavigationDto())
 
-<div class="d-flex flex-row">
-    <div class="box-shadow w-25 d-flex flex-column align-items-center">
-        <img src="~/images/homeBackground.jpg" class="w-75 h-auto rounded-circle border-info" />
-        <p>@Model.Username</p>
-        <p>@Model.ProfileBio</p>
-        @if (Model.Posts == null)
-        {
-            <p>Posts: 0</p>
-        }
-        else
-        {
-            <p>@Model.Posts.Count</p>
-        }
+<div class="d-flex flex-column align-items-center">
+    <div class="box-shadow w-50 p-3 d-flex flex-column m-3">
+        <div class="d-flex flex-row justify-content-between align-items-center">
+            @if (Model.ProfilePic == null)
+            {
+                <img src="~/images/defaultProfilePicture.jpeg" class="profile-picture rounded-circle border-info" />
+            }
+            else
+            {
+                <img src="data:image/jpg;base64,@Model.ProfilePic" class="profile-picture rounded-circle border-info" />
+            }
+            <p>Posts: @Service.PostsCount(Model.Id)</p>
+            <p>Followers: @Service.FollowersCount(Model.Id)</p>
+            <p>Following: @Service.FollowingsCount(Model.Id)</p>
+        </div>
+        <div class="d-flex flex-column">
+            <p>@Model.Username</p>
+            <p>@Model.ProfileBio</p>
+        </div>
+    </div>
+    <hr />
 
-    </div>
-    <div class="bg-light w-75">
-        <p>Posts</p>
-    </div>
+    @Html.Partial("PostsList",Model)
+
 </div>

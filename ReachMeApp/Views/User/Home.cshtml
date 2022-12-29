@@ -1,11 +1,9 @@
-﻿
+﻿@using DomainLayer.Dto
+
 @{
     ViewData["Title"] = "Index";
 }
-@using ReachMeApp.Components;
-
-@(await Html.RenderComponentAsync<NavigationBar>(RenderMode.ServerPrerendered))
-<script src="_framework/blazor.server.js"></script>
+@Html.Partial("NavigationBar", new NavigationDto())
 
 <h1>Home</h1>
 

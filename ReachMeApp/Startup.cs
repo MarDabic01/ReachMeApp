@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using RepositoryLayer.Data;
+using ServiceLayer.Service.Contract;
+using ServiceLayer.Service.Implementation;
 using System.Text;
 
 namespace ReachMeApp
@@ -42,6 +44,7 @@ namespace ReachMeApp
             services.AddMvc();
             services.AddControllers();
             services.AddServerSideBlazor();
+            services.AddTransient<UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

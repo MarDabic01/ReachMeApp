@@ -1,11 +1,57 @@
-﻿
+﻿@model DomainLayer.Dto.AccountDto
+@using DomainLayer.Dto
+
 @{
     ViewData["Title"] = "Account";
 }
-@using ReachMeApp.Components;
 
-@(await Html.RenderComponentAsync<NavigationBar>(RenderMode.ServerPrerendered))
-<script src="_framework/blazor.server.js"></script>
+@Html.Partial("NavigationBar", new NavigationDto())
 
-<h1>Account</h1>
+<div class="text-center">
+    <h1>Change your account information</h1>
+</div>
 
+<hr />
+<div class="d-flex flex-column align-items-center">
+    <div class="col-md-4">
+        <form asp-action="Account" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input asp-for="Email" class="form-control" placeholder="Email"/>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="Username" class="form-control" placeholder="Username"/>
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="Password" class="form-control" placeholder="Password"/>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="RepeatPassword" class="form-control" placeholder="Repeat password"/>
+                <span asp-validation-for="RepeatPassword" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="ProfileBio" class="form-control" placeholder="Profile description"/>
+                <span asp-validation-for="ProfileBio" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="ProfilePic" class="form-control" placeholder="Profile picture"/>
+                <span asp-validation-for="ProfilePic" class="text-danger"></span>
+            </div>
+            <div class="form-group text-center">
+                <input type="submit" value="UPDATE" class="btn btn-outline-primary" />
+            </div>
+        </form>
+        <form asp-action="DeleteAccount">
+            <div class="form-group text-center">
+                <input type="submit" value="DELETE ACCOUNT" class="btn btn-outline-danger" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
