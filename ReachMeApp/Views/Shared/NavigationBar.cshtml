@@ -11,25 +11,25 @@
             <div class="navbar-collapse collapse d-sm-inline-flex">
                 <ul class="navbar-nav flex-grow-1">
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="/User/Home">Home</a>
+                        <a class="nav-link text-dark" asp-controller="User" asp-action="Home">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="/User/Index">Profile</a>
+                        <a class="nav-link text-dark" asp-controller="User" asp-action="Index">Profile</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="/User/Discover">Discover</a>
+                        <a class="nav-link text-dark" asp-controller="User" asp-action="Discover">Discover</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="/User/Account">Account</a>
+                        <a class="nav-link text-dark" asp-controller="User" asp-action="Account">Account</a>
                     </li>
                 </ul>
-                <form class="input-group w-25 justify-content-end" method="post" asp-controller="User" asp-action="Search">
-                    <input type="text" class="form-control rounded" asp-for="SearchString" placeholder="Search" aria-label="Search" aria-describedby="search-addon"/>
+                <form class="input-group w-25 justify-content-end" method="post" asp-controller="Navigation" asp-action="Search">
+                    <input type="text" class="form-control rounded" asp-for="@Model.SearchString" placeholder="Search" aria-label="Search" aria-describedby="search-addon"/>
                     <input type="submit" class="btn btn-outline-primary" value="Search">
                 </form>
                 <ul class="navbar-nav flex-grow-1 d-flex justify-content-end">
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="User" asp-action="Post"><img class="postIcon" /></a>
+                        <a class="nav-link text-dark" asp-controller="Navigation" asp-action="Post"><img class="postIcon" /></a>
                     </li>
                     <li class="nav-item">
                         <a class="btn btn-outline-danger" asp-controller="Home" asp-action="Logout">Logout</a>

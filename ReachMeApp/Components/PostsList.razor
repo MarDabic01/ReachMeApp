@@ -1,0 +1,107 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using ServiceLayer.Service.Implementation
+@using DomainLayer.Model
+@using System.Collections;
+@inject UserService Service
+@inject PostService PostService
+@inherits DisplayPostsBase
+
+<div class="d-flex p-3 justify-content-center">
+    <div class="d-flex flex-row flex-wrap justify-content-between">
+        @foreach (Post post in Posts)
+        {
+            <div>
+                <img @onclick="(e => SelectPost(post.Id))" data-toggle="modal" data-target="#productModal"
+                     class="pb-2 post-picture" src="data:image/jpg;base64,@post.ImageData" />
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="productTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        @if (selectedPost != null)
+        {
+            <div class="modal-content">
+                <div class="modal-header">
+                    @if (GetAuthor(selectedPost.UserId).ProfilePic == null)
+                    {
+                        <img class="rounded-circle" style="height:50px; width:50px; object-fit:cover;" src="/images/defaultProfilePicture.jpeg" />
+                    }
+                    else
+                    {
+                        <img class="rounded-circle" style="height:50px; width:50px; object-fit:cover;" src="data:image/jpg;base64,@GetAuthor(selectedPost.UserId).ProfilePic" />
+                    }
+                    <h5 class="modal-title" id="productTitle">@GetAuthor(selectedPost.UserId).Username</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-img">
+                            <img style="height: 100%; width: 100%; object-fit: cover;" src="data:image/jpg;base64,@selectedPost.ImageData" />
+                        </div>
+                        <div class="card-body">
+                            @if (IsPostLiked(selectedPost.Id, MyId))
+                            {
+                                <span @onclick="(e => UnlikePost(selectedPost.Id, MyId))"><img class="likedIcon"></span>
+                            }
+                            else
+                            {
+                                <span @onclick="(e => LikePost(selectedPost.Id, MyId))"><img class="likeIcon"></span>
+                            }
+                            <span @onclick="(e => ShowComments())"><img class="commentIcon"></span>
+                            <p class="card-text mb-0">@selectedPost.Descrption</p>
+                            <p class="mt-0">Likes : @PostService.NumberOfLikes(PostService.selectedPost.Id)</p>
+                            @if (showComments)
+                            {
+                                <div>
+                                    <p class="mb-2">Comments : </p>
+                                </div>
+                                @foreach (var comment in PostService.GetComments(PostService.selectedPost.Id))
+                                {
+                                    <p class="mt-0 mb-1">
+                                        @if (GetAuthor(comment.UserId).ProfilePic == null)
+                                        {
+                                            <img class="rounded-circle" style="width:30px; height:30px; object-fit:cover;" src="/images/defaultProfilePicture.jpeg" />
+                                        }
+                                        else
+                                        {
+                                            <img class="rounded-circle" style="width:30px; height:30px; object-fit:cover;" src="data:image/jpg;base64,@Service.GetUser(comment.UserId.ToString()).ProfilePic" />
+                                        }
+                                        @Service.GetUser(comment.UserId.ToString()).Username : @comment.CommentString
+                                    </p>
+                                }
+                                <form>
+                                    <input @bind="@commentText" class="w-75" type="text" placeholder="Comment as @Service.GetUser(MyId.ToString()).Username" />
+                                    <input type="button" value="Post" @onclick="(e => PostComment(selectedPost.Id, MyId, GetCommentValue()))" />
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    Post selectedPost;
+    bool showComments = false;
+    string commentText;
+
+    void SelectPost(int postId) => selectedPost = PostService.SelectPost(postId);
+    User GetAuthor(int userId) => PostService.GetAuthor(userId);
+    void LikePost(int postId, int userId) => PostService.LikePost(postId, userId);
+    void UnlikePost(int postId, int userId) => PostService.UnlikePost(postId, userId);
+    bool IsPostLiked(int postId, int userId) => PostService.IsPostLiked(postId, userId);
+    void PostComment(int postId, int userId, string comment)
+    {
+        PostService.PostComment(postId, userId, comment);
+        commentText = "";
+    }
+
+    void ShowComments() => showComments = showComments == true ? false : true;
+    string GetCommentValue() => commentText;
+}

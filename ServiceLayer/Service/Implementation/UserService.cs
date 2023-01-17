@@ -1,12 +1,13 @@
 ﻿using DomainLayer.Dto;
 using DomainLayer.Model;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using RepositoryLayer.Data;
 using ServiceLayer.Service.Contract;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ServiceLayer.Service.Implementation
@@ -23,7 +24,7 @@ namespace ServiceLayer.Service.Implementation
         public List<User> GetAllUsers() => context.Users.ToList();
         public User GetUser(string id) => context.Users.FirstOrDefault(u => u.Id.ToString() == id);
         public User GetUserByUsername(string username) => context.Users.FirstOrDefault(u => u.Username == username);
-        public void PostPicture(PostDbDto post)
+        public void PostPicture(PostDto post)
         {
             Post newPost = new Post
             {
@@ -31,8 +32,8 @@ namespace ServiceLayer.Service.Implementation
                 UploadDate = DateTime.Now,
                 ImageData = post.ImageData,
                 Likes = 0,
-                LikedBy = "",
-                Comments = "",
+                LikedBy = "[]",
+                Comments = "[]",
                 UserId = post.UserId
             };
 
@@ -40,12 +41,24 @@ namespace ServiceLayer.Service.Implementation
             context.SaveChanges();
         }
 
-        public List<Post> GetAllPosts(int id) => context.Posts.Where(p => p.UserId == id).ToList();
+        public List<Post> GetAllPosts(int id) => context.Posts.Where(p => p.UserId == id)
+            .OrderByDescending(d => d.UploadDate).ToList();
+
+        public List<Post> GetAllFollowingPosts(int id)
+        {
+            List<Follow> followers = context.Follows.Where(f => f.FollowingId == id).ToList();
+            List<Post> posts = new List<Post>();
+            foreach (Follow f in followers)
+            {
+                posts.AddRange(context.Posts.Where(p => p.UserId == f.FollowerId).ToList());
+            }
+            return posts;
+        }
         public int PostsCount(int id) => context.Posts.Where(p => p.UserId == id).ToList().Count;
         public int FollowersCount(int id) => context.Follows.Where(p => p.FollowingId == id).ToList().Count;
         public int FollowingsCount(int id) => context.Follows.Where(p => p.FollowerId == id).ToList().Count;
         public async Task<List<User>> SearchResult(string searchingString) => await context.Users.Where(u => u.Username.Contains(searchingString)).ToListAsync();
-        public void UpdateUser(AccountDbDto account)
+        public void UpdateUser(AccountDto account)
         {
             var updatedUser = context.Users.FirstOrDefault(u => u.Id == account.Id);
 
@@ -53,7 +66,7 @@ namespace ServiceLayer.Service.Implementation
             updatedUser.Username = account.Username;
             updatedUser.Password = account.Password;
             updatedUser.ProfileBio = account.ProfileBio;
-            updatedUser.ProfilePic = account.ProfilePic;
+            updatedUser.ProfilePic = account.ProfilePicData;
             context.SaveChanges();
         }
 
@@ -67,6 +80,23 @@ namespace ServiceLayer.Service.Implementation
                 context.Posts.Remove(p);
 
             context.SaveChanges();
+        }
+
+        public string ConvertImage(IFormFile imageFile)
+        {
+            byte[] bytes = null;
+            if (imageFile != null)
+            {
+                using (Stream fs = imageFile.OpenReadStream())
+                {
+                    using (BinaryReader br = new BinaryReader(fs))
+                    {
+                        bytes = br.ReadBytes((Int32)fs.Length);
+                        return Convert.ToBase64String(bytes, 0, bytes.Length);
+                    }
+                }
+            }
+            return null;
         }
     }
 }

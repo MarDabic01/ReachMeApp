@@ -20,10 +20,7 @@ namespace ReachMeApp.Controllers
             client.BaseAddress = baseAddres;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
+        public IActionResult Index() => View();
 
         public IActionResult Logout()
         {
@@ -84,10 +81,6 @@ namespace ReachMeApp.Controllers
         [Route("Home/VerifyEmail/{id}")]
         public IActionResult VerifyEmail(string id)
         {
-            VerifyDto dto = new VerifyDto
-            {
-                UserId = id
-            };
             StringContent content = Serialize<string>(id);
             HttpResponseMessage response = client.PostAsync(client.BaseAddress + "api/LoginRegister/VerifyEmail", content).Result;
 
@@ -100,7 +93,6 @@ namespace ReachMeApp.Controllers
         {
             string data = JsonConvert.SerializeObject(obj);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-
             return content;
         }
     }

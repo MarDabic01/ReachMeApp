@@ -3,11 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.Service.Contract;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace UserAPI.Controllers
 {
@@ -24,7 +21,7 @@ namespace UserAPI.Controllers
 
         [HttpPost]
         [Authorize]
-        public IActionResult UpdateUser(AccountDbDto accountDbDto)
+        public IActionResult UpdateUser(AccountDto accountDto)
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
 
@@ -32,9 +29,9 @@ namespace UserAPI.Controllers
             {
                 var userClaims = identity.Claims;
                 var currentUser = userService.GetUser(userClaims.FirstOrDefault(u => u.Type == ClaimTypes.NameIdentifier).Value);
-                accountDbDto.Id = currentUser.Id;
+                accountDto.Id = currentUser.Id;
             }
-            userService.UpdateUser(accountDbDto);
+            userService.UpdateUser(accountDto);
             return Ok();
         }
 

@@ -1,16 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DomainLayer.Dto
 {
     public class AccountDto
     {
+        public int Id { get; set; }
         [Required]
         [EmailAddress]
         public string Email { get; set; }
@@ -27,6 +24,8 @@ namespace DomainLayer.Dto
         [DisplayName("Repeat password")]
         public string RepeatPassword { get; set; }
         public string ProfileBio { get; set; }
+        public string ProfilePicData { get; set; }
+        [JsonIgnore]
         public IFormFile ProfilePic { get; set; }
     }
 }

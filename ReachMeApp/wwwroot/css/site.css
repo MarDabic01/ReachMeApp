@@ -80,6 +80,16 @@ a {
     object-fit:cover;
 }
 
+.post-picture {
+    height: 340px;
+    width: 340px;
+    object-fit: cover;
+}
+
+.post-picture:hover{
+    transform:scale(1.1, 1.1);
+}
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {

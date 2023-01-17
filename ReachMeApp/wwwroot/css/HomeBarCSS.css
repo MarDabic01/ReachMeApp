@@ -12,6 +12,24 @@
         content: url("/images/postIconHover.png");
     }
 
+.likeIcon{
+    max-width: 30px;
+    max-height: 30px;
+    content: url("/images/likeIcon.png");
+}
+
+.likedIcon {
+    max-width: 30px;
+    max-height: 30px;
+    content: url("/images/likedIcon.png");
+}
+
+.commentIcon {
+    max-width: 26px;
+    max-height: 26px;
+    content: url("/images/commentIcon.png");
+}
+
 @font-face {
     font-family: "TitleFont";
     src: url("../fonts/ReachMeFont.otf");

@@ -2,11 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ReachMeApp.Controllers
 {
@@ -22,10 +19,7 @@ namespace ReachMeApp.Controllers
             client.BaseAddress = baseAddres;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
+        public IActionResult Index() => View();
 
         [HttpPost]
         public IActionResult Index(ForgotPasswordDto forgotPassword)
@@ -42,10 +36,7 @@ namespace ReachMeApp.Controllers
 
         [HttpGet]
         [Route("ForgotPassword/RecoverPassword/{encryptedEmail}")]
-        public IActionResult RecoverPassword()
-        {
-            return View();
-        }
+        public IActionResult RecoverPassword() => View();
 
         [HttpPost]
         [Route("ForgotPassword/RecoverPassword/{encryptedEmail}")]

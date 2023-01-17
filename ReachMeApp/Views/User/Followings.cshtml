@@ -3,13 +3,13 @@
 @using ReachMeApp.Components
 
 @{
-    ViewData["Title"] = "Discover";
+    ViewData["Title"] = "Followings";
 }
 
 @Html.Partial("NavigationBar", new NavigationDto())
 
 <div class="d-flex flex-column align-items-center">
-    <h1>Suggested for you</h1><br />
+    <h1>Profiles that user is following</h1><br />
 </div>
 
 @(await Html.RenderComponentAsync<ShowUsers>(RenderMode.ServerPrerendered, new { Users = Model}))

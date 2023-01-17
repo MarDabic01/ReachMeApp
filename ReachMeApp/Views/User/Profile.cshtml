@@ -1,7 +1,7 @@
 ﻿@model DomainLayer.Model.User
-@using DomainLayer.Model
 @using ServiceLayer.Service.Implementation
 @using DomainLayer.Dto
+@using DomainLayer.Model 
 @using ReachMeApp.Components
 @using Microsoft.AspNetCore.Http;
 @using System.Security.Claims;
@@ -11,7 +11,7 @@
 @inject UserService Service
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Profile";
     int GetCurrentId()
     {
         var token = httpContextAccessor.HttpContext.Request.Cookies["Jwt"];
@@ -43,10 +43,11 @@
             <p>@Model.Username</p>
             <p>@Model.ProfileBio</p>
         </div>
+        @(await Html.RenderComponentAsync<FollowButton>(RenderMode.ServerPrerendered, new {FollowerId = GetCurrentId(), FollowingId = Model.Id}))
     </div>
     <hr />
 
     @(await Html.RenderComponentAsync<PostsList>(RenderMode.ServerPrerendered, new {MyId = GetCurrentId(), UserId = Model.Id, Posts = Service.GetAllPosts(Model.Id) }))
 </div>
 
-<script src="_framework/blazor.server.js"></script>
+<script src="~/_framework/blazor.server.js"></script>

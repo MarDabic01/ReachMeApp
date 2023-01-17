@@ -1,32 +1,29 @@
 ﻿using DomainLayer.Dto;
 using DomainLayer.Model;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using RepositoryLayer.Data;
+using ServiceLayer.Service.Contract;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ReachMeApp.Controllers
 {
     public class NavigationController : Controller
     {
+        private readonly IUser userService;
+
         public Uri baseAddres { get; set; }
         public HttpClient client { get; set; }
 
-        public NavigationController()
+        public NavigationController(IUser userService)
         {
             baseAddres = new Uri("https://localhost:44348/");
             client = new HttpClient();
             client.BaseAddress = baseAddres;
+            this.userService = userService;
         }
 
         public IActionResult Post()
@@ -35,31 +32,16 @@ namespace ReachMeApp.Controllers
             HttpResponseMessage response = client.GetAsync(client.BaseAddress + "api/Post").Result;
 
             if (response.IsSuccessStatusCode)
-            {
-                PostDto postDto = new PostDto
-                {
-                    UserId = 0,
-                    Description = "",
-                    ImageFile = null
-                };
-                return View(postDto);
-            }
+                return View();
             return RedirectToAction("Login", "Home");
         }
 
         [HttpPost]
         public IActionResult Post(PostDto postDto)
         {
-            PostDbDto postDbDto = new PostDbDto
-            {
-                UserId = postDto.UserId,
-                Description = postDto.Description,
-                //ImageData = ConvertImage(postDto.ImageFile)
-                ImageData = ""
-            };
-
+            postDto.ImageData = userService.ConvertImage(postDto.ImageFile);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Request.Cookies["Jwt"]);
-            string data = JsonConvert.SerializeObject(postDbDto);
+            string data = JsonConvert.SerializeObject(postDto);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
 
             HttpResponseMessage response = client.PostAsync(client.BaseAddress + "api/Post", content).Result;

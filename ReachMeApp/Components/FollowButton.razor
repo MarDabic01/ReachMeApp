@@ -1,0 +1,23 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using ServiceLayer.Service.Implementation
+@inject FollowService FollowService
+@inherits FollowButtonBase
+
+@if (FollowerId != FollowingId)
+{
+    <div class="text-center">
+        @if (FollowService.IsAlreadyFollowing(FollowerId, FollowingId) == true)
+        {
+            <button @onclick="(e => UnfollowUser(FollowerId,FollowingId))" class="btn btn-outline-dark">Unfollow</button>
+        }
+        else
+        {
+            <button @onclick="(e => FollowUser(FollowerId,FollowingId))" class="btn btn-outline-dark">Follow</button>
+        }
+    </div>
+}
+
+@code {
+    void FollowUser(int followerId, int followingId) => FollowService.FollowUser(followerId, followingId);
+    void UnfollowUser(int followerId, int followingId) => FollowService.UnfollowUser(followerId, followingId);
+}

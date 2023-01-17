@@ -1,11 +1,6 @@
 ﻿using DomainLayer.Dto;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.Service.Contract;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LoginRegisterAPI.Controllers
 {
@@ -44,9 +39,9 @@ namespace LoginRegisterAPI.Controllers
         }
 
         [HttpPost("VerifyEmail")]
-        public IActionResult VerifyEmail(VerifyDto verify)
+        public IActionResult VerifyEmail(string verify)
         {
-            loginRegister.VerifyUser(verify.UserId);
+            loginRegister.VerifyUser(verify);
             return Ok();
         }
     }

@@ -1,6 +1,5 @@
 ﻿using DomainLayer.Dto;
 using DomainLayer.Model;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using RepositoryLayer.Data;
@@ -45,7 +44,7 @@ namespace ServiceLayer.Service.Implementation
                 new Claim(ClaimTypes.GivenName, user.Username),
                 new Claim(ClaimTypes.Email, user.Email)
             };
-
+            
             var token = new JwtSecurityToken(
                 "https://localhost:44348/",
                 "https://localhost:44348/",
@@ -114,9 +113,6 @@ namespace ServiceLayer.Service.Implementation
             return true;
         }
 
-        public bool IsUserVerified(User user)
-        {
-            return context.Users.FirstOrDefault(u => u.Id == user.Id).IsVerified == true ? true : false;
-        }
+        public bool IsUserVerified(User user) => context.Users.FirstOrDefault(u => u.Id == user.Id).IsVerified == true ? true : false;
     }
 }

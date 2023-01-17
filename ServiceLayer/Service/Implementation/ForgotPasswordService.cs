@@ -1,15 +1,12 @@
 ﻿using DomainLayer.Dto;
-using DomainLayer.Model;
 using RepositoryLayer.Data;
 using ServiceLayer.Service.Contract;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ServiceLayer.Service.Implementation
 {

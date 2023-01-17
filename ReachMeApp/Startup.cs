@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using RepositoryLayer.Data;
@@ -43,8 +45,22 @@ namespace ReachMeApp
             services.AddControllersWithViews();
             services.AddMvc();
             services.AddControllers();
-            services.AddServerSideBlazor();
+            services.AddServerSideBlazor()
+                .AddHubOptions(options =>
+                {
+                    // Increase the limits to 256 kB
+                    options.MaximumReceiveMessageSize = 15 * 1024 * 1024;
+                });
             services.AddTransient<UserService>();
+            services.AddTransient<PostService>();
+            services.AddTransient<FollowService>();
+            services.AddScoped<IUser, UserService>();
+            services.AddScoped<IPost, PostService>();
+            services.AddScoped<IFollow, FollowService>();
+            services.AddHttpContextAccessor();
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddTransient<HttpContextAccessor>();
+            services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -70,7 +86,13 @@ namespace ReachMeApp
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapBlazorHub();
+                endpoints.MapRazorPages();
+                endpoints.MapBlazorHub(options =>
+                {
+                    // Increase the limits to 256 kB
+                    options.ApplicationMaxBufferSize = 15 * 1024 * 1024;
+                    options.TransportMaxBufferSize = 15 * 1024 * 1024;
+                });
                 endpoints.MapControllers();
                 endpoints.MapControllerRoute(
                     name: "default",

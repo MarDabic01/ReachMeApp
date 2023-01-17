@@ -1,32 +1,30 @@
 ﻿using DomainLayer.Dto;
 using DomainLayer.Model;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using RepositoryLayer.Data;
+using ServiceLayer.Service.Contract;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ReachMeApp.Controllers
 {
     public class UserController : Controller
     {
+        private readonly IUser userService;
+
         public Uri baseAddres { get; set; }
         public HttpClient client { get; set; }
 
-        public UserController()
+        public UserController(IUser userService)
         {
             baseAddres = new Uri("https://localhost:44348/");
             client = new HttpClient();
             client.BaseAddress = baseAddres;
+            this.userService = userService;
         }
 
         public IActionResult Index()
@@ -34,15 +32,15 @@ namespace ReachMeApp.Controllers
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Request.Cookies["Jwt"]);
             HttpResponseMessage response = client.GetAsync(client.BaseAddress + "api/Profile").Result;
             var currentUser = JsonConvert.DeserializeObject<User>(response.Content.ReadAsStringAsync().Result);
-            
+
             if(response.IsSuccessStatusCode)
                 return View(currentUser);
             return RedirectToAction("Login", "Home");
         }
 
         [HttpGet]
-        [Route("/User/Index/{username}")]
-        public IActionResult Index(string username)
+        [Route("/User/Profile/{username}")]
+        public IActionResult Profile(string username)
         {
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Request.Cookies["Jwt"]);
             HttpResponseMessage response = client.GetAsync(client.BaseAddress + "api/Profile/" + username).Result;
@@ -55,42 +53,37 @@ namespace ReachMeApp.Controllers
 
         public IActionResult Home()
         {
-            return View();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Request.Cookies["Jwt"]);
+            HttpResponseMessage response = client.GetAsync(client.BaseAddress + "api/Profile").Result;
+            var currentUser = JsonConvert.DeserializeObject<User>(response.Content.ReadAsStringAsync().Result);
+
+            if (response.IsSuccessStatusCode)
+                return View(currentUser);
+            return RedirectToAction("Login", "Home");
         }
 
         public IActionResult Discover()
         {
-            return View();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Request.Cookies["Jwt"]);
+            HttpResponseMessage response = client.GetAsync(client.BaseAddress + "api/Suggestions").Result;
+            var suggestedUsers = JsonConvert.DeserializeObject<List<User>>(response.Content.ReadAsStringAsync().Result);
+
+            if (response.IsSuccessStatusCode)
+                return View(suggestedUsers);
+            return RedirectToAction("Login", "Home");
         }
 
         public IActionResult Account()
         {
-            AccountDto accountDto = new AccountDto
-            {
-                Email = "",
-                Username = "",
-                Password = "",
-                RepeatPassword = "",
-                ProfileBio = "",
-                ProfilePic = null
-            };
-            return View(accountDto);
+            return View();
         }
 
         [HttpPost]
         public IActionResult Account(AccountDto accountDto)
         {
-            AccountDbDto accountDbDto = new AccountDbDto
-            {
-                Email = accountDto.Email,
-                Username = accountDto.Username,
-                Password = accountDto.Password,
-                ProfileBio = accountDto.ProfileBio,
-                ProfilePic = ConvertImage(accountDto.ProfilePic)
-            };
-
+            accountDto.ProfilePicData = userService.ConvertImage(accountDto.ProfilePic);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Request.Cookies["Jwt"]);
-            string data = JsonConvert.SerializeObject(accountDbDto);
+            string data = JsonConvert.SerializeObject(accountDto);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
 
             HttpResponseMessage response = client.PostAsync(client.BaseAddress + "api/Account", content).Result;
@@ -115,74 +108,30 @@ namespace ReachMeApp.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        public IActionResult Post()
+        [HttpGet]
+        [Route("/User/Followers/{username}")]
+        public IActionResult Followers(string username)
         {
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Request.Cookies["Jwt"]);
-            HttpResponseMessage response = client.GetAsync(client.BaseAddress + "api/Post").Result;
+            HttpResponseMessage response = client.GetAsync(client.BaseAddress + "api/Followers/" + username).Result;
+            var followers = JsonConvert.DeserializeObject<List<User>>(response.Content.ReadAsStringAsync().Result);
 
             if (response.IsSuccessStatusCode)
-            {
-                PostDto postDto = new PostDto
-                {
-                    UserId = 0,
-                    Description = "",
-                    ImageFile = null
-                };
-                return View(postDto);
-            }
+                return View(followers);
             return RedirectToAction("Login", "Home");
         }
 
-        [HttpPost]
-        public IActionResult Post(PostDto postDto)
-        {
-            PostDbDto postDbDto = new PostDbDto
-            {
-                UserId = postDto.UserId,
-                Description = postDto.Description,
-                ImageData = ConvertImage(postDto.ImageFile)
-            };
-
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Request.Cookies["Jwt"]);
-            string data = JsonConvert.SerializeObject(postDbDto);
-            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-
-            HttpResponseMessage response = client.PostAsync(client.BaseAddress + "api/Post", content).Result;
-
-            if (response.IsSuccessStatusCode)
-                return View();
-            return RedirectToAction("Index", "User");
-        }
-
-        public IActionResult Search(NavigationDto navigationDto)
+        [HttpGet]
+        [Route("/User/Followings/{username}")]
+        public IActionResult Followings(string username)
         {
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Request.Cookies["Jwt"]);
-            string data = JsonConvert.SerializeObject(navigationDto.SearchString);
-            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-
-            HttpResponseMessage response = client.PostAsync(client.BaseAddress + "api/Search", content).Result;
-            List<User> searchResults = JsonConvert.DeserializeObject<List<User>>(response.Content.ReadAsStringAsync().Result);
+            HttpResponseMessage response = client.GetAsync(client.BaseAddress + "api/Followings/" + username).Result;
+            var followings = JsonConvert.DeserializeObject<List<User>>(response.Content.ReadAsStringAsync().Result);
 
             if (response.IsSuccessStatusCode)
-                return View(searchResults);
+                return View(followings);
             return RedirectToAction("Login", "Home");
-        }
-
-        private string ConvertImage(IFormFile image)
-        {
-            byte[] bytes = null;
-            if (image != null)
-            {
-                using (Stream fs = image.OpenReadStream())
-                {
-                    using (BinaryReader br = new BinaryReader(fs))
-                    {
-                        bytes = br.ReadBytes((Int32)fs.Length);
-                        return Convert.ToBase64String(bytes, 0, bytes.Length);
-                    }
-                }
-            }
-            return null;
         }
     }
 }

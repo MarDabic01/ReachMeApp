@@ -1,0 +1,29 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@inherits DisplayUsersBase
+
+<div class="d-flex justify-content-center w-100">
+    <div class="d-flex flex-row flex-wrap justify-content-between">
+        @foreach (var user in Users)
+        {
+            <div>
+                <div class="card-img text-center">
+                    @if (user.ProfilePic == null)
+                    {
+                        <img src="/images/defaultProfilePicture.jpeg" style="height: 340px; width: 340px; object-fit: cover;" class="rounded-circle pb-2" />
+                    }
+                    else
+                    {
+                        <img src="data:image/jpg;base64,@user.ProfilePic" style="height: 340px; width: 340px; object-fit: cover;" class="rounded-circle pb-2" />
+                    }
+                </div>
+                <div class="card-body text-center">
+                    <a href="User/Profile/@user.Username">@user.Username</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+
+}
