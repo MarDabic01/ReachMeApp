@@ -19,6 +19,20 @@ namespace UserAPI.Controllers
             this.userService = userService;
         }
 
+        [HttpGet]
+        [Authorize]
+        public IActionResult ShowAccount()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+
+            if (identity != null)
+            {
+                var userClaims = identity.Claims;
+                return Ok(userService.GetUser(userClaims.FirstOrDefault(u => u.Type == ClaimTypes.NameIdentifier).Value));
+            }
+            return BadRequest();
+        }
+
         [HttpPost]
         [Authorize]
         public IActionResult UpdateUser(AccountDto accountDto)

@@ -46,11 +46,11 @@ namespace ServiceLayer.Service.Implementation
 
         public List<Post> GetAllFollowingPosts(int id)
         {
-            List<Follow> followers = context.Follows.Where(f => f.FollowingId == id).ToList();
+            List<Follow> followings = context.Follows.Where(f => f.FollowerId == id).ToList();
             List<Post> posts = new List<Post>();
-            foreach (Follow f in followers)
+            foreach (Follow f in followings)
             {
-                posts.AddRange(context.Posts.Where(p => p.UserId == f.FollowerId).ToList());
+                posts.AddRange(context.Posts.Where(p => p.UserId == f.FollowingId).ToList());
             }
             return posts;
         }

@@ -77,13 +77,24 @@ namespace ServiceLayer.Service.Implementation
                 myFollowingsFollowings.AddRange(context.Follows.Where(f => f.FollowerId == u.Id).ToList());
 
             List<Follow> suggestionIds = new List<Follow>();
+            List<Follow> suggestionIds2 = new List<Follow>();
             List<User> suggestions = new List<User>();
 
             foreach(Follow f in myFollowingsFollowings)
                 foreach(Follow f2 in myFollowings)
-                    if (f2.FollowingId != f.FollowingId && suggestionIds.Contains(f) == false && f.FollowingId != currentUser.Id)
+                    if (f2.FollowingId != f.FollowingId && suggestionIds.Contains(f) == false 
+                        && f.FollowingId != currentUser.Id)
+                    {
                         suggestionIds.Add(f);
+                        suggestionIds2.Add(f);
+                    }
+
             foreach (Follow f in suggestionIds)
+                foreach (Follow f2 in myFollowings)
+                    if (f.FollowingId == f2.FollowingId)
+                        suggestionIds2.Remove(f);
+
+            foreach (Follow f in suggestionIds2)
                 suggestions.Add(context.Users.FirstOrDefault(u => u.Id == f.FollowingId));
 
             return suggestions;

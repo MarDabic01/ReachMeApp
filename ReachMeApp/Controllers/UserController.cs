@@ -75,7 +75,12 @@ namespace ReachMeApp.Controllers
 
         public IActionResult Account()
         {
-            return View();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Request.Cookies["Jwt"]);
+            HttpResponseMessage response = client.GetAsync(client.BaseAddress + "api/Account").Result;
+
+            if (response.IsSuccessStatusCode)
+                return View();
+            return RedirectToAction("Login", "Home");
         }
 
         [HttpPost]

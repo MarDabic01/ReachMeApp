@@ -1,7 +1,7 @@
 ﻿@model DomainLayer.Model.User
 @using ServiceLayer.Service.Implementation
 @using DomainLayer.Dto
-@using DomainLayer.Model 
+@using DomainLayer.Model
 @using ReachMeApp.Components
 @using Microsoft.AspNetCore.Http;
 @using System.Security.Claims;
@@ -9,6 +9,7 @@
 @using System.IdentityModel.Tokens.Jwt
 @inject HttpContextAccessor httpContextAccessor
 @inject UserService Service
+@inject FollowService FollowService
 
 @{
     ViewData["Title"] = "Profile";
@@ -46,8 +47,19 @@
         @(await Html.RenderComponentAsync<FollowButton>(RenderMode.ServerPrerendered, new {FollowerId = GetCurrentId(), FollowingId = Model.Id}))
     </div>
     <hr />
-
-    @(await Html.RenderComponentAsync<PostsList>(RenderMode.ServerPrerendered, new {MyId = GetCurrentId(), UserId = Model.Id, Posts = Service.GetAllPosts(Model.Id) }))
+    @if (FollowService.IsAlreadyFollowing(GetCurrentId(), Model.Id) == true)
+    {
+        @(await Html.RenderComponentAsync<PostsList>(RenderMode.ServerPrerendered, new {MyId = GetCurrentId(), UserId = Model.Id, Posts = Service.GetAllPosts(Model.Id) }))
+    }
+    else
+    {
+        @if (GetCurrentId() != Model.Id)
+        {
+            <div class="text-center">
+                <h1 class="display-4">You need to follow this user to see their posts</h1>
+            </div>
+        }
+    }
 </div>
 
 <script src="~/_framework/blazor.server.js"></script>

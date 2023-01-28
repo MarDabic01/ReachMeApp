@@ -12,6 +12,7 @@
 @{
     ViewData["Title"] = "Home";
     List<Post> myPosts = Service.GetAllFollowingPosts(Model.Id);
+    List<Post> folowingsPosts = Service.GetAllFollowingPosts(GetCurrentId());
     int GetCurrentId()
     {
         var token = httpContextAccessor.HttpContext.Request.Cookies["Jwt"];
@@ -26,6 +27,16 @@
 
 <h1>Home</h1>
 
-@(await Html.RenderComponentAsync<PostsList>(RenderMode.ServerPrerendered, new {MyId = GetCurrentId(), UserId = Model.Id, Posts = Service.GetAllFollowingPosts(GetCurrentId()) }))
+@if (myPosts.Count > 0)
+{
+    @(await Html.RenderComponentAsync<PostsList>(RenderMode.ServerPrerendered, new {MyId = GetCurrentId(), UserId = Model.Id, Posts = Service.GetAllFollowingPosts(GetCurrentId()) }))
+}
+else
+{
+    <div class="text-center">
+        <h1 class="display-4">No posts to show</h1>
+        <h5>Users that you follow haven't posted anything yet. When they post something, it will be shown here.</h5>
+    </div>
+}
 
 <script src="_framework/blazor.server.js"></script>

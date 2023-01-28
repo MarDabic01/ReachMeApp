@@ -39,7 +39,7 @@ namespace LoginRegisterAPI.Controllers
         }
 
         [HttpPost("VerifyEmail")]
-        public IActionResult VerifyEmail(string verify)
+        public IActionResult VerifyEmail([FromBody]string verify)
         {
             loginRegister.VerifyUser(verify);
             return Ok();

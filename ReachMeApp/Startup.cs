@@ -8,10 +8,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using RepositoryLayer.Data;
 using ServiceLayer.Service.Contract;
 using ServiceLayer.Service.Implementation;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace ReachMeApp
 {
@@ -57,7 +59,7 @@ namespace ReachMeApp
             services.AddScoped<IUser, UserService>();
             services.AddScoped<IPost, PostService>();
             services.AddScoped<IFollow, FollowService>();
-            services.AddHttpContextAccessor();
+            services.AddHttpContextAccessor(); 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<HttpContextAccessor>();
             services.AddRazorPages();

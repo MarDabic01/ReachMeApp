@@ -82,7 +82,7 @@ namespace ServiceLayer.Service.Implementation
         public void SendVerificationEmail(string email, string id)
         {
             MailAddress to = new MailAddress(email);
-            MailAddress from = new MailAddress("reachme915@gmail.com");
+            MailAddress from = new MailAddress("reachme.official15@gmail.com");
             MailMessage message = new MailMessage(from, to);
             message.Subject = "REACH ME - Verification message";
             message.Body = "<html>" +
@@ -92,7 +92,7 @@ namespace ServiceLayer.Service.Implementation
             message.IsBodyHtml = true;
             SmtpClient client = new SmtpClient("smtp.gmail.com", 587)
             {
-                Credentials = new NetworkCredential("reachme915@gmail.com", "yeljtbfzakhgwaow"),
+                Credentials = new NetworkCredential("reachme.official15@gmail.com", "vtrxwkpwceczcven"),
                 EnableSsl = true
             };
             client.Send(message);
