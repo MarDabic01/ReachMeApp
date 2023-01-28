@@ -45,12 +45,12 @@ namespace ReachMeApp
                 });
             services.AddDbContext<DataContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllersWithViews();
-            services.AddMvc();
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(x =>
+               x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
             services.AddServerSideBlazor()
                 .AddHubOptions(options =>
                 {
-                    // Increase the limits to 256 kB
                     options.MaximumReceiveMessageSize = 15 * 1024 * 1024;
                 });
             services.AddTransient<UserService>();

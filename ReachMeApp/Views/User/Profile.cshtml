@@ -47,7 +47,7 @@
         @(await Html.RenderComponentAsync<FollowButton>(RenderMode.ServerPrerendered, new {FollowerId = GetCurrentId(), FollowingId = Model.Id}))
     </div>
     <hr />
-    @if (FollowService.IsAlreadyFollowing(GetCurrentId(), Model.Id) == true)
+    @if (FollowService.IsAlreadyFollowing(GetCurrentId(), Model.Id) == true || GetCurrentId() == Model.Id)
     {
         @(await Html.RenderComponentAsync<PostsList>(RenderMode.ServerPrerendered, new {MyId = GetCurrentId(), UserId = Model.Id, Posts = Service.GetAllPosts(Model.Id) }))
     }

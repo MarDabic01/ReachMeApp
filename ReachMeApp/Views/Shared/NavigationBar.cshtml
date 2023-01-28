@@ -1,4 +1,24 @@
 ﻿@model DomainLayer.Dto.NavigationDto
+@using DomainLayer.Model
+@using ServiceLayer.Service.Implementation
+@using Microsoft.AspNetCore.Http;
+@using System.Security.Claims;
+@using System.IdentityModel.Tokens.Jwt
+@inject HttpContextAccessor httpContextAccessor
+@inject UserService Service
+
+@{
+    ViewData["Title"] = "Index";
+    int GetCurrentId()
+    {
+        var token = httpContextAccessor.HttpContext.Request.Cookies["Jwt"];
+        var handler = new JwtSecurityTokenHandler();
+        var jwtSecurityToken = handler.ReadJwtToken(token);
+        var tokenS = jwtSecurityToken as JwtSecurityToken;
+        return int.Parse(tokenS.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value);
+    }
+    User currentUser = (Model.CurrentUser == null) ? Service.GetUser(GetCurrentId().ToString()) : Model.CurrentUser;
+}
 
 <header>
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
@@ -35,6 +55,17 @@
                         <a class="btn btn-outline-danger" asp-controller="Home" asp-action="Logout">Logout</a>
                     </li>
                 </ul>
+                <div class="flex ml-1 text-center">
+                    @if (currentUser.ProfilePic != null)
+                    {
+                        <img class="navbar-picture rounded-circle" src="data:image/jpg;base64,@currentUser.ProfilePic" />
+                    }
+                    else
+                    {
+                        <img class="navbar-picture rounded-circle" src="~/images/defaultProfilePicture.jpeg" />
+                    }
+                    <p>@currentUser.Username</p>
+                </div>
             </div>
         </div>
     </nav>

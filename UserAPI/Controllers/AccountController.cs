@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.Service.Contract;
+using System;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 
@@ -28,7 +30,21 @@ namespace UserAPI.Controllers
             if (identity != null)
             {
                 var userClaims = identity.Claims;
-                return Ok(userService.GetUser(userClaims.FirstOrDefault(u => u.Type == ClaimTypes.NameIdentifier).Value));
+                var currentUser = userService.GetUser(userClaims.FirstOrDefault(u => u.Type == ClaimTypes.NameIdentifier).Value);
+
+                AccountDto accountDto = new AccountDto
+                {
+                    Id = currentUser.Id,
+                    Email = currentUser.Email,
+                    Username = currentUser.Username,
+                    Password = currentUser.Password,
+                    RepeatPassword = currentUser.Password,
+                    ProfileBio = currentUser.ProfileBio,
+                    ProfilePicData = currentUser.ProfilePic,
+                    ProfilePic = null
+                };
+
+                return Ok(accountDto);
             }
             return BadRequest();
         }

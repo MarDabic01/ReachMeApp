@@ -77,9 +77,10 @@ namespace ReachMeApp.Controllers
         {
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Request.Cookies["Jwt"]);
             HttpResponseMessage response = client.GetAsync(client.BaseAddress + "api/Account").Result;
+            var currentUser = JsonConvert.DeserializeObject<AccountDto>(response.Content.ReadAsStringAsync().Result);
 
             if (response.IsSuccessStatusCode)
-                return View();
+                return View(currentUser);
             return RedirectToAction("Login", "Home");
         }
 
@@ -94,7 +95,7 @@ namespace ReachMeApp.Controllers
             HttpResponseMessage response = client.PostAsync(client.BaseAddress + "api/Account", content).Result;
 
             if (response.IsSuccessStatusCode)
-                return View();
+                return RedirectToAction("Index", "User");
             return RedirectToAction("Index", "User");
         }
 
