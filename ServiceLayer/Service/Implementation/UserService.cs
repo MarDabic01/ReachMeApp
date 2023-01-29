@@ -15,10 +15,12 @@ namespace ServiceLayer.Service.Implementation
     public class UserService : IUser
     {
         private readonly DataContext context;
+        private readonly IForgotPassword forgotPasswordService;
 
-        public UserService(DataContext context)
+        public UserService(DataContext context, IForgotPassword forgotPasswordService)
         {
             this.context = context;
+            this.forgotPasswordService = forgotPasswordService;
         }
 
         public List<User> GetAllUsers() => context.Users.ToList();
@@ -64,7 +66,7 @@ namespace ServiceLayer.Service.Implementation
 
             updatedUser.Email = account.Email;
             updatedUser.Username = account.Username;
-            updatedUser.Password = account.Password;
+            updatedUser.Password = forgotPasswordService.EncryptString(account.Password);
             updatedUser.ProfileBio = account.ProfileBio;
             updatedUser.ProfilePic = account.ProfilePicData;
             context.SaveChanges();

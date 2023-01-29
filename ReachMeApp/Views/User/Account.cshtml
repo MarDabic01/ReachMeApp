@@ -26,11 +26,11 @@
                 <span asp-validation-for="Username" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input asp-for="Password" class="form-control" placeholder="Password"/>
+                <input type="password" asp-for="Password" class="form-control" placeholder="Password" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input asp-for="RepeatPassword" class="form-control" placeholder="Repeat password"/>
+                <input type="password" asp-for="RepeatPassword" class="form-control" placeholder="Repeat password" />
                 <span asp-validation-for="RepeatPassword" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -38,8 +38,12 @@
                 <span asp-validation-for="ProfileBio" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input asp-for="ProfilePic" class="form-control" placeholder="Profile picture"/>
+                <input asp-for="ProfilePic" class="form-control" placeholder="Profile picture" />
                 <span asp-validation-for="ProfilePic" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="hidden" asp-for="ProfilePicData" class="form-control" placeholder="Profile picture" />
+                <span asp-validation-for="ProfilePicData" class="text-danger"></span>
             </div>
             <div class="form-group text-center">
                 <input type="submit" value="UPDATE" class="btn btn-outline-primary" />

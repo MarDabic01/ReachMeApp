@@ -28,7 +28,7 @@ namespace LoginRegisterAPI.Controllers
         [HttpPost("Register")]
         public IActionResult Register(RegisterDto newUser)
         {
-            if(!loginRegister.IsInfoUsed(newUser))
+            if(!loginRegister.IsInfoUsed(newUser.Email, newUser.Username))
             {
                 var id = loginRegister.Register(newUser);
                 loginRegister.SendVerificationEmail(newUser.Email, id);

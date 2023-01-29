@@ -87,7 +87,7 @@ namespace ReachMeApp.Controllers
         [HttpPost]
         public IActionResult Account(AccountDto accountDto)
         {
-            accountDto.ProfilePicData = userService.ConvertImage(accountDto.ProfilePic);
+            accountDto.ProfilePicData = (accountDto.ProfilePic == null) ? accountDto.ProfilePicData : userService.ConvertImage(accountDto.ProfilePic);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Request.Cookies["Jwt"]);
             string data = JsonConvert.SerializeObject(accountDto);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
@@ -96,7 +96,7 @@ namespace ReachMeApp.Controllers
 
             if (response.IsSuccessStatusCode)
                 return RedirectToAction("Index", "User");
-            return RedirectToAction("Index", "User");
+            return View();
         }
 
         [HttpPost]

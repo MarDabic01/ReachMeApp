@@ -11,7 +11,9 @@ namespace ServiceLayer.Service.Contract
         User Authenticate(LoginDto user);
         void SendVerificationEmail(string email, string token);
         void VerifyUser(string id);
-        bool IsInfoUsed(RegisterDto user);
+        bool IsInfoUsed(string email, string username);
+        bool IsUsernameUsed(string username);
+        bool IsEmailUsed(string email);
         bool IsUserVerified(User user);
     }
 }

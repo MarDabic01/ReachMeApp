@@ -18,16 +18,18 @@ namespace ServiceLayer.Service.Implementation
     {
         private readonly DataContext context;
         private readonly IConfiguration config;
+        private readonly IForgotPassword forgotPasswordService;
 
-        public LoginRegisterService(DataContext context, IConfiguration config)
+        public LoginRegisterService(DataContext context, IConfiguration config, IForgotPassword forgotPasswordService)
         {
             this.context = context;
             this.config = config;
+            this.forgotPasswordService = forgotPasswordService;
         }
 
         public User Authenticate(LoginDto loginUser)
         {
-            var user = context.Users.FirstOrDefault(u => u.Username == loginUser.Username && u.Password == loginUser.Password);
+            var user = context.Users.FirstOrDefault(u => u.Username == loginUser.Username && u.Password == forgotPasswordService.EncryptString(loginUser.Password));
 
             if (user != null)
                 return user;
@@ -71,7 +73,7 @@ namespace ServiceLayer.Service.Implementation
 
             user.Email = newUser.Email;
             user.Username = newUser.Username;
-            user.Password = newUser.Password;
+            user.Password = forgotPasswordService.EncryptString(newUser.Password);
 
             context.Users.Add(user);
             context.SaveChanges();
@@ -106,9 +108,23 @@ namespace ServiceLayer.Service.Implementation
             context.SaveChanges();
         }
 
-        public bool IsInfoUsed(RegisterDto user)
+        public bool IsInfoUsed(string email, string username)
         {
-            if(context.Users.FirstOrDefault(u => u.Username == user.Username) == null && context.Users.FirstOrDefault(u => u.Email == user.Email) == null)
+            if(context.Users.FirstOrDefault(u => u.Username == username) == null && context.Users.FirstOrDefault(u => u.Email == email) == null)
+                return false;
+            return true;
+        }
+
+        public bool IsEmailUsed(string email)
+        {
+            if (context.Users.FirstOrDefault(u => u.Email == email) == null)
+                return false;
+            return true;
+        }
+
+        public bool IsUsernameUsed(string username)
+        {
+            if (context.Users.FirstOrDefault(u => u.Username == username) == null)
                 return false;
             return true;
         }

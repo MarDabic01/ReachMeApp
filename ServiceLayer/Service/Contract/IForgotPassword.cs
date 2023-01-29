@@ -6,5 +6,7 @@ namespace ServiceLayer.Service.Contract
     {
         void SendRecoverEmail(ForgotPasswordDto forgotPassword);
         void RecoverPassword(RecoverPasswordDto recoverPassword);
+        string EncryptString(string word);
+        string DecryptString(string word);
     }
 }

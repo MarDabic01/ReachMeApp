@@ -27,7 +27,7 @@ namespace ServiceLayer.Service.Implementation
             message.Subject = "REACH ME - Recover password";
             message.Body = "<html>" +
                 "<h1>We are willing to help you</h1>" +
-                "<h3>Please recover your password <a href='https://localhost:44355/ForgotPassword/RecoverPassword/" + EncryptEmail(forgotPassword.Email) + "'>here</a></h3>" +
+                "<h3>Please recover your password <a href='https://localhost:44355/ForgotPassword/RecoverPassword/" + EncryptString(forgotPassword.Email) + "'>here</a></h3>" +
                 "</html>";
             message.IsBodyHtml = true;
             SmtpClient client = new SmtpClient("smtp.gmail.com", 587)
@@ -40,15 +40,15 @@ namespace ServiceLayer.Service.Implementation
 
         public void RecoverPassword(RecoverPasswordDto recoverPassword)
         {
-            var user = context.Users.FirstOrDefault(u => u.Email == DecryptEmail(recoverPassword.EncryptedEmail));
+            var user = context.Users.FirstOrDefault(u => u.Email == DecryptString(recoverPassword.EncryptedEmail));
 
-            user.Password = recoverPassword.Password;
+            user.Password = EncryptString(recoverPassword.Password);
             context.SaveChanges();
         }
 
-        private string EncryptEmail(string email)
+        public string EncryptString(string word)
         {
-            byte[] data = UTF8Encoding.UTF8.GetBytes(email);
+            byte[] data = UTF8Encoding.UTF8.GetBytes(word);
             byte[] result;
             using(MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider())
             {
@@ -62,9 +62,9 @@ namespace ServiceLayer.Service.Implementation
             return Convert.ToBase64String(result, 0, result.Length);
         }
 
-        private string DecryptEmail(string email)
+        public string DecryptString(string word)
         {
-            byte[] data = Convert.FromBase64String(email);
+            byte[] data = Convert.FromBase64String(word);
             byte[] result;
             using (MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider())
             {

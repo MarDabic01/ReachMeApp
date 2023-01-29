@@ -63,6 +63,8 @@ namespace ReachMeApp
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<HttpContextAccessor>();
             services.AddRazorPages();
+            services.AddScoped<IForgotPassword, ForgotPasswordService>();
+            services.AddTransient<ForgotPasswordService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

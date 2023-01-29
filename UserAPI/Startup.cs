@@ -42,6 +42,9 @@ namespace UserAPI
             });
             services.AddScoped<IUser, UserService>();
             services.AddScoped<IFollow, FollowService>();
+            services.AddScoped<ILoginRegister, LoginRegisterService>();
+            services.AddScoped<IForgotPassword, ForgotPasswordService>();
+            services.AddTransient<ForgotPasswordService>();
             services.AddDbContext<DataContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();
             services.AddMvc();
