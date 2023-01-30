@@ -1,6 +1,7 @@
 ﻿using DomainLayer.Dto;
 using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.Service.Contract;
+using System;
 
 namespace LoginRegisterAPI.Controllers
 {
@@ -18,7 +19,13 @@ namespace LoginRegisterAPI.Controllers
         [HttpPost("SendRecoverEmail")]
         public IActionResult SendRecoverEmail(ForgotPasswordDto forgotPasswordDto)
         {
-            forgotPassword.SendRecoverEmail(forgotPasswordDto);
+            try
+            {
+                forgotPassword.SendRecoverEmail(forgotPasswordDto, "windows");
+            }catch(Exception e)
+            {
+                forgotPassword.SendRecoverEmail(forgotPasswordDto, "mac");
+            }
             return Ok();
         }
 

@@ -1,6 +1,7 @@
 ﻿using DomainLayer.Dto;
 using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.Service.Contract;
+using System;
 
 namespace LoginRegisterAPI.Controllers
 {
@@ -31,7 +32,13 @@ namespace LoginRegisterAPI.Controllers
             if(!loginRegister.IsInfoUsed(newUser.Email, newUser.Username))
             {
                 var id = loginRegister.Register(newUser);
-                loginRegister.SendVerificationEmail(newUser.Email, id);
+                try
+                {
+                    loginRegister.SendVerificationEmail(newUser.Email, id, "windows");
+                }catch(Exception e)
+                {
+                    loginRegister.SendVerificationEmail(newUser.Email, id, "mac");
+                }
 
                 return Ok(id);
             }

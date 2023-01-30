@@ -81,23 +81,31 @@ namespace ServiceLayer.Service.Implementation
             return user.Id.ToString();
         }
 
-        public void SendVerificationEmail(string email, string id)
+        public void SendVerificationEmail(string email, string id, string system)
         {
             MailAddress to = new MailAddress(email);
-            MailAddress from = new MailAddress("reachme.official15@gmail.com");
+            MailAddress from = new MailAddress("reachme.official00@gmail.com");
             MailMessage message = new MailMessage(from, to);
+            string appPassword = "";
             message.Subject = "REACH ME - Verification message";
             message.Body = "<html>" +
                 "<h1>Welcome to ReachMe</h1>" +
                 "<h3>Please verify your e-mail <a href='https://localhost:44355/Home/VerifyEmail/"+ id +"'>here</a></h3>" +
                 "</html>";
             message.IsBodyHtml = true;
+
+            switch(system)
+            {
+                case "windows" : appPassword = "hkzbbkkwabnhxthp";break;
+                case "mac": appPassword = "kbxtftisymqtkqql";break;
+            }
+
             SmtpClient client = new SmtpClient("smtp.gmail.com", 587)
             {
-                Credentials = new NetworkCredential("reachme.official15@gmail.com", "vtrxwkpwceczcven"),
+                Credentials = new NetworkCredential("reachme.official00@gmail.com", appPassword),
                 EnableSsl = true
             };
-            client.Send(message);
+            client.Send(message); 
         }
 
         public void VerifyUser(string id)

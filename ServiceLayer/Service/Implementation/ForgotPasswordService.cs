@@ -19,20 +19,28 @@ namespace ServiceLayer.Service.Implementation
             this.context = context;
         }
 
-        public void SendRecoverEmail(ForgotPasswordDto forgotPassword)
+        public void SendRecoverEmail(ForgotPasswordDto forgotPassword, string system)
         {
             MailAddress to = new MailAddress(forgotPassword.Email);
-            MailAddress from = new MailAddress("reachme.official15@gmail.com");
+            MailAddress from = new MailAddress("reachme.official00@gmail.com");
             MailMessage message = new MailMessage(from, to);
+            string appPassword = "";
             message.Subject = "REACH ME - Recover password";
             message.Body = "<html>" +
                 "<h1>We are willing to help you</h1>" +
                 "<h3>Please recover your password <a href='https://localhost:44355/ForgotPassword/RecoverPassword/" + EncryptString(forgotPassword.Email) + "'>here</a></h3>" +
                 "</html>";
             message.IsBodyHtml = true;
+
+            switch (system)
+            {
+                case "windows": appPassword = "hkzbbkkwabnhxthp"; break;
+                case "mac": appPassword = "kbxtftisymqtkqql"; break;
+            }
+
             SmtpClient client = new SmtpClient("smtp.gmail.com", 587)
             {
-                Credentials = new NetworkCredential("reachme.official15@gmail.com", "vtrxwkpwceczcven"),
+                Credentials = new NetworkCredential("reachme.official00@gmail.com", appPassword),
                 EnableSsl = true
             };
             client.Send(message);
