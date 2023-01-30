@@ -8,8 +8,8 @@ namespace ServiceLayer.Service.Contract
         void FollowUser(int followerId, int followingId);
         void UnfollowUser(int followerId, int followingId);
         bool IsAlreadyFollowing(int followerId, int followingId);
-        List<User> GetFollowers(string username);
-        List<User> GetFollowings(string username);
-        List<User> GetSuggestions(string username);
+        List<User> GetFollowers(User user);
+        List<User> GetFollowings(User user);
+        List<User> GetSuggestions(User user);
     }
 }

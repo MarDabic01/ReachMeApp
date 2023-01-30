@@ -30,7 +30,7 @@ namespace UserAPI.Controllers
         [HttpGet]
         public IActionResult GetFollowers(string username)
         {
-            return Ok(followService.GetFollowers(username));
+            return Ok(followService.GetFollowers(userService.GetUserByUsername(username)));
         }
 
         [Authorize]
@@ -38,7 +38,7 @@ namespace UserAPI.Controllers
         [HttpGet]
         public IActionResult GetFollowings(string username)
         {
-            return Ok(followService.GetFollowings(username));
+            return Ok(followService.GetFollowings(userService.GetUserByUsername(username)));
         }
 
         [Authorize]
@@ -55,7 +55,7 @@ namespace UserAPI.Controllers
                 currentUser = userService.GetUser(userClaims.FirstOrDefault(u => u.Type == ClaimTypes.NameIdentifier).Value);
             }
 
-            return Ok(followService.GetSuggestions(currentUser.Username));
+            return Ok(followService.GetSuggestions(currentUser));
         }
     }
 }

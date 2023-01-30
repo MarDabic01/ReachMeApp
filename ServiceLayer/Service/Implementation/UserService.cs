@@ -100,7 +100,5 @@ namespace ServiceLayer.Service.Implementation
             }
             return null;
         }
-
-        public string GetProfilePic(int id) => context.Users.FirstOrDefault(u => u.Id == id).ProfilePic;
     }
 }

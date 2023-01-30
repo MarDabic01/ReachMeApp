@@ -21,6 +21,5 @@ namespace ServiceLayer.Service.Contract
         public void UpdateUser(AccountDto account);
         public void DeleteUser(int id);
         public string ConvertImage(IFormFile image);
-        public string GetProfilePic(int id);
     }
 }

@@ -29,7 +29,7 @@ namespace LoginRegisterAPI.Controllers
         [HttpPost("Register")]
         public IActionResult Register(RegisterDto newUser)
         {
-            if(!loginRegister.IsInfoUsed(newUser.Email, newUser.Username))
+            if(loginRegister.IsEmailUsed(newUser.Email) == false && loginRegister.IsUsernameUsed(newUser.Username) == false)
             {
                 var id = loginRegister.Register(newUser);
                 try

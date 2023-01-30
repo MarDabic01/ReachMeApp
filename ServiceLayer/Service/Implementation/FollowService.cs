@@ -1,6 +1,7 @@
 ﻿using DomainLayer.Model;
 using RepositoryLayer.Data;
 using ServiceLayer.Service.Contract;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,10 +10,12 @@ namespace ServiceLayer.Service.Implementation
     public class FollowService : IFollow
     {
         private readonly DataContext context;
+        private readonly IUser userService;
 
-        public FollowService(DataContext context)
+        public FollowService(DataContext context, IUser userService)
         {
             this.context = context;
+            this.userService = userService;
         }
 
         public void FollowUser(int followerId, int followingId)
@@ -29,7 +32,6 @@ namespace ServiceLayer.Service.Implementation
         public void UnfollowUser(int followerId, int followingId)
         {
             List<Follow> allFollowers = context.Follows.Where(f => f.FollowingId == followingId).ToList();
-
             foreach (Follow f in allFollowers)
                 if (f.FollowerId == followerId)
                     context.Follows.Remove(f);
@@ -39,65 +41,33 @@ namespace ServiceLayer.Service.Implementation
         public bool IsAlreadyFollowing(int followerId, int followingId)
         {
             List<Follow> allFollowers = context.Follows.Where(f => f.FollowingId == followingId).ToList();
-
             foreach (Follow f in allFollowers)
                 if (f.FollowerId == followerId)
                     return true;
             return false;
         }
 
-        public List<User> GetFollowers(string username)
+        public List<User> GetFollowers(User user)
         {
-            List<User> followers = new List<User>();
-            User currentUser = context.Users.FirstOrDefault(u => u.Username == username);
-            List<Follow> followsIds = context.Follows.Where(f => f.FollowingId == currentUser.Id).ToList();
-            foreach (Follow f in followsIds)
-                followers.Add(context.Users.FirstOrDefault(u => u.Id == f.FollowerId));
-            return followers;
+            List<int> followerIds = context.Follows.Where(f => f.FollowingId == user.Id).Select(u => u.FollowerId).ToList();
+            return context.Users.Where(u => followerIds.Contains(u.Id)).ToList();
         }
 
-        public List<User> GetFollowings(string username)
+        public List<User> GetFollowings(User user)
         {
-            List<User> followings = new List<User>();
-            User currentUser = context.Users.FirstOrDefault(u => u.Username == username);
-            List<Follow> followingsIds = context.Follows.Where(f => f.FollowerId == currentUser.Id).ToList();
-            foreach (Follow f in followingsIds)
-                followings.Add(context.Users.FirstOrDefault(u => u.Id == f.FollowingId));
-            return followings;
+            List<int> followingsIds = context.Follows.Where(f => f.FollowerId == user.Id).Select(u => u.FollowingId).ToList();
+            return context.Users.Where(u => followingsIds.Contains(u.Id)).ToList();
         }
 
-        public List<User> GetSuggestions(string username)
+        public List<User> GetSuggestions(User user)
         {
-            User currentUser = context.Users.FirstOrDefault(u => u.Username == username);
-            List<Follow> myFollowings = context.Follows.Where(f => f.FollowerId == currentUser.Id).ToList();
+            List<int> usersThatIFollow = context.Follows.Where(f => f.FollowerId == user.Id).Select(u => u.FollowingId).ToList();
+            List<int> usersThatMyFollowersFollow = context.Follows.Where(f => usersThatIFollow.Contains(f.FollowerId)).Select(f => f.FollowingId).ToList();
+            List<int> suggestedUsersId = usersThatMyFollowersFollow.Except(usersThatIFollow).ToList();
+            if (suggestedUsersId.Contains(user.Id))
+                suggestedUsersId.Remove(user.Id);
 
-            List<User> usersThatIFollow = GetFollowings(username);
-            List<Follow> myFollowingsFollowings = new List<Follow>();
-            foreach(User u in usersThatIFollow)
-                myFollowingsFollowings.AddRange(context.Follows.Where(f => f.FollowerId == u.Id).ToList());
-
-            List<Follow> suggestionIds = new List<Follow>();
-            List<Follow> suggestionIds2 = new List<Follow>();
-            List<User> suggestions = new List<User>();
-
-            foreach(Follow f in myFollowingsFollowings)
-                foreach(Follow f2 in myFollowings)
-                    if (f2.FollowingId != f.FollowingId && suggestionIds.Contains(f) == false 
-                        && f.FollowingId != currentUser.Id)
-                    {
-                        suggestionIds.Add(f);
-                        suggestionIds2.Add(f);
-                    }
-
-            foreach (Follow f in suggestionIds)
-                foreach (Follow f2 in myFollowings)
-                    if (f.FollowingId == f2.FollowingId)
-                        suggestionIds2.Remove(f);
-
-            foreach (Follow f in suggestionIds2)
-                suggestions.Add(context.Users.FirstOrDefault(u => u.Id == f.FollowingId));
-
-            return suggestions;
+            return context.Users.Where(u => suggestedUsersId.Contains(u.Id)).ToList();
         }
     }
 }
